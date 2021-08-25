@@ -290,7 +290,6 @@ D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\bin\Debug\Win32Interop.Gdi32.x
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\bin\Debug\Win32Interop.Kernel32.pdb
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\bin\Debug\Win32Interop.User32.pdb
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\bin\Debug\Win32Interop.Uxtheme.pdb
-D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.csprojAssemblyReference.cache
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.Properties.Resources.resources
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.ViewPurchaseInvoices.resources
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.csproj.GenerateResource.cache
@@ -331,3 +330,5 @@ D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIM
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.ViewSaleInvoices.resources
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.Warehouses.resources
 D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.StocksReturn.resources
+D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.csproj.AssemblyReference.cache
+D:\C#\HelloWorldSolutionIMS\HelloWorldSolutionIMS\obj\Debug\HelloWorldSolutionIMS.DatabaseSettings.resources
