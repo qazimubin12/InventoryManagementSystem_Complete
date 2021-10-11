@@ -237,6 +237,7 @@ namespace HelloWorldSolutionIMS
                     if(dgvCustomerLedgers.SelectedRows.Count == 1)
                     {
                         dgvCustomerLedgers.Enabled = false;
+                        lblp.Text = "Customer";
                         float payment = 0;
                         float remain = 0;
                         string name = "";
@@ -457,6 +458,7 @@ namespace HelloWorldSolutionIMS
                 }
                 else
                 {
+                    changedtype = 0;
                     LedgerReportForm lf = new LedgerReportForm();
                     lf.Show();
                 }

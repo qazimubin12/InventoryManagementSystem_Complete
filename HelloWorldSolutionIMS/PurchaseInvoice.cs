@@ -51,9 +51,9 @@ namespace HelloWorldSolutionIMS
         {
             if (txtQuantity.Text != "" && txtQuantity.Text != "0")
             {
-                Int32 rate = Convert.ToInt32(txtPurchaseRate.Text);
-                int qty;
-                int.TryParse(txtQuantity.Text.Trim(), out qty);
+                float rate = float.Parse(txtPurchaseRate.Text);
+                float qty;
+                float.TryParse(txtQuantity.Text.Trim(), out qty);
                 txtProductTot.Text = Convert.ToString(qty * rate);
             }
             else
@@ -91,12 +91,12 @@ namespace HelloWorldSolutionIMS
 
         private void FindTotal()
         {
-            int gross = 0;
+            float gross = 0;
             if (dgvPurchaseItems.Rows.Count > 0)
             {
                 foreach (DataGridViewRow row in dgvPurchaseItems.Rows)
                 {
-                    gross += Convert.ToInt32(row.Cells["TotalGV"].Value.ToString());
+                    gross += float.Parse(row.Cells["TotalGV"].Value.ToString());
                 }
                 txtGrandTotal.Text = Convert.ToString(gross);
                 txtTotalAmount.Text = Convert.ToString(gross);
@@ -228,6 +228,10 @@ namespace HelloWorldSolutionIMS
                         {
                             productcheck = true;
                         }
+                        else
+                        {
+                            productcheck = false;
+                        }
                     }
                     if (productcheck == true)
                     {
@@ -236,7 +240,7 @@ namespace HelloWorldSolutionIMS
                             if (Convert.ToString(row.Cells[0].Value) == Convert.ToString(cboProductName.SelectedValue))
                             {
                                 row.Cells["QtyGVC"].Value = float.Parse(row.Cells["QtyGVC"].Value.ToString()) + quantity;
-                                row.Cells["TotalGV"].Value = float.Parse(row.Cells["QtyGVC"].Value.ToString()) * Convert.ToInt32(row.Cells["PurchaseRateGVC"].Value.ToString());
+                                row.Cells["TotalGV"].Value = float.Parse(row.Cells["QtyGVC"].Value.ToString()) * float.Parse(row.Cells["PurchaseRateGVC"].Value.ToString());
                                 ClearForm();
                             }
                         }
@@ -320,12 +324,12 @@ namespace HelloWorldSolutionIMS
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int gross = 0;
+            float gross = 0;
             if (dgvPurchaseItems.Rows.Count > 0)
             {
                 foreach (DataGridViewRow row in dgvPurchaseItems.Rows)
                 {
-                    gross += Convert.ToInt32(row.Cells["TotalGV"].Value.ToString());
+                    gross += float.Parse(row.Cells["TotalGV"].Value.ToString());
                 }
                 txtGrandTotal.Text = Convert.ToString(gross);
                 txtTotalAmount.Text = Convert.ToString(gross);
@@ -380,9 +384,19 @@ namespace HelloWorldSolutionIMS
             {
                 if (btnFinalize.Text == "&FINALIZE")
                 {
-                    string invoiceno = "PUR" + DateTime.Now.ToString("yyddff");
-                    button1.PerformClick();
-                    int grandtotal = Convert.ToInt32(txtGrandTotal.Text.ToString());
+                    Random generator = new Random();
+                    string invoiceno = "SAL" + generator.Next(0, 1000000).ToString("D6");
+                    MainClass.con.Open();
+                    cmd = new SqlCommand("select InvoiceNo from Sales where InvoiceNo  = '" + invoiceno + "'", MainClass.con);
+                    object notunique = cmd.ExecuteScalar();
+                    MainClass.con.Close();
+
+                    if (notunique != null)
+                    {
+                        generator = new Random();
+                        invoiceno = "PUR" + generator.Next(0, 1000000).ToString("D6");
+                    }
+                    float grandtotal = float.Parse(txtGrandTotal.Text.ToString());
                     MainClass.con.Open();
                     try
                     {
@@ -588,15 +602,15 @@ namespace HelloWorldSolutionIMS
                                     cmd.Parameters.AddWithValue("@st_Pcode", item.Cells[0].Value.ToString());
                                     if (item.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        cmd.Parameters.AddWithValue("@st_Qty", int.Parse(item.Cells[4].Value.ToString()) * int.Parse(baseqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@st_Qty", float.Parse(item.Cells[4].Value.ToString()) * float.Parse(baseqty.ToString()));
                                     }
                                     else if (item.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        cmd.Parameters.AddWithValue("@st_Qty", int.Parse(item.Cells[4].Value.ToString()) * int.Parse(defaultqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@st_Qty", float.Parse(item.Cells[4].Value.ToString()) * float.Parse(defaultqty.ToString()));
                                     }
                                     else
                                     {
-                                        cmd.Parameters.AddWithValue("@st_Qty", int.Parse(item.Cells[4].Value.ToString()) * int.Parse(subqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@st_Qty", float.Parse(item.Cells[4].Value.ToString()) * float.Parse(subqty.ToString()));
 
                                     }
                                     cmd.Parameters.AddWithValue("@BaseRate", baserate);
@@ -605,19 +619,19 @@ namespace HelloWorldSolutionIMS
                                 }
                                 else //Updating Godown
                                 {
-                                    int q = Convert.ToInt32(stockqty);
+                                    float q = float.Parse((string)stockqty);
                                     if (item.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        q += int.Parse(item.Cells["QtyGVC"].Value.ToString()) * int.Parse(baseqty.ToString());
+                                        q += float.Parse(item.Cells["QtyGVC"].Value.ToString()) * float.Parse(baseqty.ToString());
                                     }
                                     else if (item.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        q += int.Parse(item.Cells["QtyGVC"].Value.ToString()) * int.Parse(defaultqty.ToString());
+                                        q += float.Parse(item.Cells["QtyGVC"].Value.ToString()) * float.Parse(defaultqty.ToString());
 
                                     }
                                     else
                                     {
-                                        q += int.Parse(item.Cells["QtyGVC"].Value.ToString()) * int.Parse(subqty.ToString());
+                                        q += float.Parse(item.Cells["QtyGVC"].Value.ToString()) * float.Parse(subqty.ToString());
                                     }
                                     MainClass.UpdateStock(int.Parse(item.Cells[0].Value.ToString()), q);
                                 }
@@ -631,15 +645,15 @@ namespace HelloWorldSolutionIMS
                                     cmd.Parameters.AddWithValue("@sh_Pcode", item.Cells[0].Value.ToString());
                                     if (item.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        cmd.Parameters.AddWithValue("@sh_Qty", int.Parse(item.Cells[4].Value.ToString()) * int.Parse(baseqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@sh_Qty", float.Parse(item.Cells[4].Value.ToString()) * float.Parse(baseqty.ToString()));
                                     }
                                     else if (item.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        cmd.Parameters.AddWithValue("@sh_Qty", int.Parse(item.Cells[4].Value.ToString()) * int.Parse(defaultqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@sh_Qty", float.Parse(item.Cells[4].Value.ToString()) * float.Parse(defaultqty.ToString()));
                                     }
                                     else
                                     {
-                                        cmd.Parameters.AddWithValue("@sh_Qty", int.Parse(item.Cells[4].Value.ToString()) * int.Parse(subqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@sh_Qty", float.Parse(item.Cells[4].Value.ToString()) * float.Parse(subqty.ToString()));
 
                                     }
                                     cmd.Parameters.AddWithValue("@BaseRate", baserate);
@@ -648,19 +662,19 @@ namespace HelloWorldSolutionIMS
                                 }
                                 else //Updating Shop
                                 {
-                                    int q = Convert.ToInt32(shopqty);
+                                    float q = float.Parse((string)shopqty);
                                     if (item.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        q += int.Parse(item.Cells["QtyGVC"].Value.ToString()) * int.Parse(baseqty.ToString());
+                                        q += float.Parse(item.Cells["QtyGVC"].Value.ToString()) * float.Parse(baseqty.ToString());
                                     }
                                     else if (item.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        q += int.Parse(item.Cells["QtyGVC"].Value.ToString()) * int.Parse(defaultqty.ToString());
+                                        q += float.Parse(item.Cells["QtyGVC"].Value.ToString()) * float.Parse(defaultqty.ToString());
 
                                     }
                                     else
                                     {
-                                        q += int.Parse(item.Cells["QtyGVC"].Value.ToString()) * int.Parse(subqty.ToString());
+                                        q += float.Parse(item.Cells["QtyGVC"].Value.ToString()) * float.Parse(subqty.ToString());
 
                                     }
                                     MainClass.UpdateShop(int.Parse(item.Cells[0].Value.ToString()), q);
@@ -1034,15 +1048,15 @@ namespace HelloWorldSolutionIMS
                                     cmd.Parameters.AddWithValue("@st_Pcode", sold.Cells[0].Value.ToString());
                                     if (sold.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        cmd.Parameters.AddWithValue("@st_Qty", int.Parse(sold.Cells[4].Value.ToString()) * int.Parse(baseqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@st_Qty", float.Parse(sold.Cells[4].Value.ToString()) * float.Parse(baseqty.ToString()));
                                     }
                                     else if (sold.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        cmd.Parameters.AddWithValue("@st_Qty", int.Parse(sold.Cells[4].Value.ToString()) * int.Parse(defaultqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@st_Qty", float.Parse(sold.Cells[4].Value.ToString()) * float.Parse(defaultqty.ToString()));
                                     }
                                     else
                                     {
-                                        cmd.Parameters.AddWithValue("@st_Qty", int.Parse(sold.Cells[4].Value.ToString()) * int.Parse(subqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@st_Qty", float.Parse(sold.Cells[4].Value.ToString()) * float.Parse(subqty.ToString()));
 
                                     }
                                     cmd.Parameters.AddWithValue("@BaseRate", baserate);
@@ -1051,19 +1065,19 @@ namespace HelloWorldSolutionIMS
                                 }
                                 else //Updating Godown
                                 {
-                                    int q = Convert.ToInt32(stockqty);
+                                    float q = float.Parse((string)stockqty);
                                     if (sold.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        q += int.Parse(sold.Cells["QtyGVC"].Value.ToString()) * int.Parse(baseqty.ToString());
+                                        q += float.Parse(sold.Cells["QtyGVC"].Value.ToString()) * float.Parse(baseqty.ToString());
                                     }
                                     else if (sold.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        q += int.Parse(sold.Cells["QtyGVC"].Value.ToString()) * int.Parse(defaultqty.ToString());
+                                        q += float.Parse(sold.Cells["QtyGVC"].Value.ToString()) * float.Parse(defaultqty.ToString());
 
                                     }
                                     else
                                     {
-                                        q += int.Parse(sold.Cells["QtyGVC"].Value.ToString()) * int.Parse(subqty.ToString());
+                                        q += float.Parse(sold.Cells["QtyGVC"].Value.ToString()) * float.Parse(subqty.ToString());
                                     }
                                     MainClass.UpdateStock(int.Parse(sold.Cells[0].Value.ToString()), q);
                                 }
@@ -1077,15 +1091,15 @@ namespace HelloWorldSolutionIMS
                                     cmd.Parameters.AddWithValue("@sh_Pcode", sold.Cells[0].Value.ToString());
                                     if (sold.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        cmd.Parameters.AddWithValue("@sh_Qty", int.Parse(sold.Cells[4].Value.ToString()) * int.Parse(baseqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@sh_Qty", float.Parse(sold.Cells[4].Value.ToString()) * float.Parse(baseqty.ToString()));
                                     }
                                     else if (sold.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        cmd.Parameters.AddWithValue("@sh_Qty", int.Parse(sold.Cells[4].Value.ToString()) * int.Parse(defaultqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@sh_Qty", float.Parse(sold.Cells[4].Value.ToString()) * float.Parse(defaultqty.ToString()));
                                     }
                                     else
                                     {
-                                        cmd.Parameters.AddWithValue("@sh_Qty", int.Parse(sold.Cells[4].Value.ToString()) * int.Parse(subqty.ToString()));
+                                        cmd.Parameters.AddWithValue("@sh_Qty", float.Parse(sold.Cells[4].Value.ToString()) * float.Parse(subqty.ToString()));
 
                                     }
                                     cmd.Parameters.AddWithValue("@BaseRate", baserate);
@@ -1094,19 +1108,19 @@ namespace HelloWorldSolutionIMS
                                 }
                                 else //Updating Shop
                                 {
-                                    int q = Convert.ToInt32(shopqty);
+                                    float q = float.Parse((string)shopqty);
                                     if (sold.Cells["TypeGV"].Value.ToString() == "Base")
                                     {
-                                        q += int.Parse(sold.Cells["QtyGVC"].Value.ToString()) * int.Parse(baseqty.ToString());
+                                        q += float.Parse(sold.Cells["QtyGVC"].Value.ToString()) * float.Parse(baseqty.ToString());
                                     }
                                     else if (sold.Cells["TypeGV"].Value.ToString() == "Default")
                                     {
-                                        q += int.Parse(sold.Cells["QtyGVC"].Value.ToString()) * int.Parse(defaultqty.ToString());
+                                        q += float.Parse(sold.Cells["QtyGVC"].Value.ToString()) * float.Parse(defaultqty.ToString());
 
                                     }
                                     else
                                     {
-                                        q += int.Parse(sold.Cells["QtyGVC"].Value.ToString()) * int.Parse(subqty.ToString());
+                                        q += float.Parse(sold.Cells["QtyGVC"].Value.ToString()) * float.Parse(subqty.ToString());
 
                                     }
                                     MainClass.UpdateShop(int.Parse(sold.Cells[0].Value.ToString()), q);
@@ -1155,8 +1169,8 @@ namespace HelloWorldSolutionIMS
         {
             if (txtPayingAmount.Text != "" || txtPayingAmount.Text == "0")
             {
-                Int32 tot = Convert.ToInt32(txtTotalAmount.Text);
-                Int32 paying = Convert.ToInt32(txtPayingAmount.Text);
+                float tot = float.Parse(txtTotalAmount.Text);
+                float paying = float.Parse(txtPayingAmount.Text);
                 txtRemainingAmount.Text = Convert.ToString(tot - paying);
             }
         }

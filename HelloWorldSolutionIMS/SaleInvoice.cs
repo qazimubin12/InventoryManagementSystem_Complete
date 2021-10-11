@@ -343,6 +343,11 @@ namespace HelloWorldSolutionIMS
                             Convert.ToString(check.Cells[5].Value) == Convert.ToString(cboType.SelectedValue))
                         {
                             productcheck = true;
+                            break;
+                        }
+                        else
+                        {
+                            productcheck = false;
                         }
                     }
                     if (productcheck == true)
@@ -471,6 +476,7 @@ namespace HelloWorldSolutionIMS
 
        
         public static int SaleID = 0;
+        public static string SALEINVOICENO;
         private void btnFinalize_Click(object sender, EventArgs e)
         {
 
@@ -506,7 +512,18 @@ namespace HelloWorldSolutionIMS
 
                 if (btnFinalize.Text == "&FINALIZE")
                 {
-                    string invoiceno = "SAL" + DateTime.Now.ToString("yyddff");
+                    Random generator = new Random();
+                    string invoiceno = "SAL" + generator.Next(0, 1000000).ToString("D6");
+                    MainClass.con.Open();
+                    cmd = new SqlCommand("select InvoiceNo from Sales where InvoiceNo  = '" + invoiceno + "'", MainClass.con);
+                    object notunique = cmd.ExecuteScalar();
+                    MainClass.con.Close();
+
+                    if (notunique != null)
+                    {
+                        generator = new Random();
+                        invoiceno = "SAL" + generator.Next(0, 1000000).ToString("D6");
+                    }
                     button1.PerformClick();
                     int grandtotal = Convert.ToInt32(txtGrandTotal.Text.ToString());
                     MainClass.con.Open();
@@ -1086,6 +1103,7 @@ namespace HelloWorldSolutionIMS
 
 
                     MainClass.con.Close();
+                    SALEINVOICENO = invoiceno;
                     SaleReportForm srf = new SaleReportForm();
                     srf.Show();
                     CompleteClear();
